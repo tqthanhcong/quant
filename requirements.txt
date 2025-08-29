@@ -4,3 +4,4 @@ matplotlib
 requests
 vnstock
 beautifulsoup4
+ipython
