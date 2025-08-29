@@ -1,6 +1,6 @@
 on:
   schedule:
-    - cron: '0 9 * * 1-5' # 18h VN, 11h UTC mỗi ngày làm việc
+    - cron: '30 9 * * 1-5' 
 jobs:
   run:
     runs-on: ubuntu-latest
@@ -9,4 +9,5 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.9'
+      - run: pip install -r requirements.txt
       - run: python files/noti/macd_divergence.py
