@@ -15,5 +15,6 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install --upgrade -r requirements.txt
           python -m pip install beautifulsoup4
+          python -m pip install -U vnstock
       - name: Run script
         run: python noti/macd_divergence.py
