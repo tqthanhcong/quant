@@ -1,6 +1,6 @@
 on:
   schedule:
-    - cron: '30 9 * * 1-5' 
+    - cron: '48 9 * * 1-5' 
 jobs:
   run:
     runs-on: ubuntu-latest
@@ -10,4 +10,4 @@ jobs:
         with:
           python-version: '3.9'
       - run: pip install -r requirements.txt
-      - run: python files/noti/macd_divergence.py
+      - run: python noti/macd_divergence.py
