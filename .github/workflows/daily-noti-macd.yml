@@ -1,6 +1,6 @@
 on:
   schedule:
-    - cron: '30 8 * * 1-5' # 18h VN, 11h UTC mỗi ngày làm việc
+    - cron: '0 9 * * 1-5' # 18h VN, 11h UTC mỗi ngày làm việc
 jobs:
   run:
     runs-on: ubuntu-latest
