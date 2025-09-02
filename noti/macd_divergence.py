@@ -138,7 +138,7 @@ def notify_discord(divergence_signals, webhook_url):
 
 # --- Main Logic ---
 def main():
-    start = (date.today() - timedelta(days=60)).strftime('%Y-%m-%d')
+    start = (date.today() - timedelta(days=3)).strftime('%Y-%m-%d')
     end = date.today().strftime('%Y-%m-%d')
     symbols = get_symbols_by_group('VN100')
     data_all = fetch_history_for_symbols(symbols, start=start, end=end)
