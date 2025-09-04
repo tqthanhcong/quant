@@ -144,7 +144,7 @@ def main():
     data_all = fetch_history_for_symbols(symbols, start=start, end=end)
     data_all = data_all.set_index('time')
     end_date = pd.to_datetime(data_all.index.max())
-    start_date = end_date - timedelta(days=3)
+    start_date = end_date - timedelta(days=7)
     divergence_signals = []
     for symbol in data_all['symbol'].unique():
         df_symbol = data_all[data_all['symbol'] == symbol].copy()
