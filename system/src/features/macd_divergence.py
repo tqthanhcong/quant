@@ -52,8 +52,49 @@ def _local_extrema_indices(x: pd.Series, window: int = 3) -> tuple[list[int], li
                 troughs.append(i)
     return peaks, troughs
 
+def add_ema(df,fast=12,slow=26):
+    df['ema_fast'] = _ema(df['close'], fast)
+    df['ema_slow'] = _ema(df['close'], slow)
+    return df
 
-def add_macd_divergence_column(
+def add_macd(df,fast=12,slow=26,signal=9):
+    macd, macd_signal, hist = _macd(df['close'], fast=fast, slow=slow, signal=signal)
+    df['macd'] = macd
+    df['macd_signal'] = macd_signal
+    df['macd_hist'] = hist
+    return df
+
+def add_macd_local_extrema(df,local_window=3):
+    peaks, troughs = _local_extrema_indices(df['macd_hist'], window=local_window)
+    df['macd_peaks'] = 0
+    df['macd_troughs'] = 0
+    df.loc[peaks, 'macd_peaks'] = 1
+    df.loc[troughs, 'macd_troughs'] = -1
+    return df
+
+def add_divergence_signals(df,price_col='close'):
+    df['macd_divergence'] = 0
+    # Bullish: price makes lower low, histogram makes higher low (troughs)
+    troughs = df.index[df['macd_troughs'] == -1].tolist()
+    for j in range(1, len(troughs)):
+        i1, i2 = troughs[j - 1], troughs[j]
+        if not (np.isfinite(df['macd_hist'].iloc[i1]) and np.isfinite(df['macd_hist'].iloc[i2])):
+            continue
+        if df[price_col].iloc[i2] < df[price_col].iloc[i1] and df['macd_hist'].iloc[i2] > df['macd_hist'].iloc[i1]:
+            df.at[i2, 'macd_divergence'] = 1
+
+    # Bearish: price makes higher high, histogram makes lower high (peaks)
+    peaks = df.index[df['macd_peaks'] == 1].tolist()
+    for j in range(1, len(peaks)):
+        i1, i2 = peaks[j - 1], peaks[j]
+        if not (np.isfinite(df['macd_hist'].iloc[i1]) and np.isfinite(df['macd_hist'].iloc[i2])):
+            continue
+        if df[price_col].iloc[i2] > df[price_col].iloc[i1] and df['macd_hist'].iloc[i2] < df['macd_hist'].iloc[i1]:
+            # If both bullish and bearish hit same bar, prefer bearish (-1)
+            df.at[i2, 'macd_divergence'] = -1
+    return df
+
+def add_macd_divergence_old(
     df: pd.DataFrame,
     *,
     price_col: str = "close",
@@ -112,8 +153,3 @@ def add_macd_divergence_column(
 
     out[out_col] = signal_arr
     return out
-
-
-# Short alias
-def macd_divergence(df: pd.DataFrame, **kwargs) -> pd.DataFrame:
-    return add_macd_divergence_column(df, **kwargs)
