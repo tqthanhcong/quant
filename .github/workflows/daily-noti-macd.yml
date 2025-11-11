@@ -15,7 +15,6 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install --upgrade -r requirements.txt
           python -m pip install beautifulsoup4
-          # install vnstock with specific version
           python -m pip install vnstock==3.2.6 vnai==2.1.9
           
       - name: Run script
